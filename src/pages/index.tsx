@@ -15,6 +15,7 @@ import {
 } from 'wagmi';
 import { UNITY_TOKEN_ABI, UNITY_TOKEN_ADDRESS } from '../contracts/UnityToken';
 import { useDebounce } from 'use-debounce';
+import { mainnet } from 'wagmi/chains';
 
 const GAS_RESERVE_MULTIPLIER = 110n; // 10% buffer as BigInt (110/100)
 const GAS_RESERVE_DIVISOR = 100n;
@@ -69,7 +70,7 @@ const Home: NextPage = () => {
       try {
         // Convert gas estimate to ETH with BigInt calculations
         const estimatedGasCost = estimatedGas 
-          ? formatEther((estimatedGas * GAS_RESERVE_MULTIPLIER / GAS_RESERVE_DIVISOR).toString()) 
+          ? formatEther(estimatedGas * GAS_RESERVE_MULTIPLIER / GAS_RESERVE_DIVISOR) 
           : '0.01'; // Default gas estimate if not available
 
         // Calculate max ETH available for purchase
@@ -102,7 +103,7 @@ const Home: NextPage = () => {
     };
 
     calculateMaxPurchase();
-  }, [ethBalance, address, estimatedGas]);
+  }, [ethBalance, address, estimatedGas, additionalEthRequired, canPurchase]);
 
   // Watch for successful token purchase events
   useWatchContractEvent({
@@ -136,6 +137,8 @@ const Home: NextPage = () => {
         functionName: 'buyTokens',
         args: [[], []],
         value: parseEther(maxPurchaseAmount),
+        chain: mainnet,
+        account: address
       });
     } catch (e) {
       setError('Transaction failed');
@@ -167,7 +170,7 @@ const Home: NextPage = () => {
               <p>Maximum Purchase: {maxPurchaseAmount} ETH</p>
               {estimatedGas && (
                 <p>Estimated Gas: {formatEther(
-                  (estimatedGas * GAS_RESERVE_MULTIPLIER / GAS_RESERVE_DIVISOR).toString()
+                  estimatedGas * GAS_RESERVE_MULTIPLIER / GAS_RESERVE_DIVISOR
                 )} ETH</p>
               )}
               {additionalEthRequired > 0 && (

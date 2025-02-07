@@ -16,7 +16,7 @@ import { WagmiProvider } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Link from 'next/link'; // Import Link from Next.js
-import Admin from './Admin'; // Import the Admin component
+// import Admin from './Admin'; // Remove or uncomment if needed
 import { useRouter } from 'next/router'; // Import useRouter from Next.js
 import styles from '../styles/Home.module.css';
 
