@@ -1,21 +1,73 @@
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
+import {
+  metaMaskWallet,
+  trustWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+  injectedWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import type { AppProps } from 'next/app';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WagmiProvider } from 'wagmi';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { mainnet } from 'wagmi/chains';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Link from 'next/link'; // Import Link from Next.js
+import Admin from './Admin'; // Import the Admin component
+import { useRouter } from 'next/router'; // Import useRouter from Next.js
+import styles from '../styles/Home.module.css';
 
-import { config } from '../wagmi';
+const projectId = 'YOUR_WALLETCONNECT_PROJECT_ID'; // Get from https://cloud.walletconnect.com
 
-const client = new QueryClient();
+// Create wagmi config using RainbowKit's getDefaultConfig
+const config = getDefaultConfig({
+  appName: 'Unity Token App',
+  projectId,
+  chains: [mainnet],
+  ssr: true,
+  wallets: [
+    {
+      groupName: 'Recommended',
+      wallets: [
+        injectedWallet,
+        metaMaskWallet,
+        coinbaseWallet,
+      ]
+    },
+    {
+      groupName: 'Other Wallets',
+      wallets: [
+        trustWallet,
+        walletConnectWallet,
+      ]
+    }
+  ]
+});
+
+// Create React Query client
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter(); // Get the router instance
+
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <Component {...pageProps} />
+          <div>
+            <nav className={styles.navbar}>
+              <Link href="/" passHref>
+                <span className={styles.navLink}>Home</span>
+              </Link>
+              {/* <Link href="/admin" passHref>
+                <span className={styles.navLink}>Admin</span>
+              </Link> */}
+            </nav>
+            <Component {...pageProps} />
+          </div>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

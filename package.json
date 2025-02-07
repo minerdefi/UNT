@@ -13,6 +13,8 @@
     "next": "^15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5",
+    "use-debounce": "^10.0.4",
     "viem": "2.21.55",
     "wagmi": "^2.14.7"
   },
