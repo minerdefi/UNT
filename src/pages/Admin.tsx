@@ -14,10 +14,14 @@ const Admin = () => {
     abi: UNITY_TOKEN_ABI,
     functionName: 'balanceOf',
     args: [UNITY_TOKEN_ADDRESS], // Assuming the contract holds its own tokens
-    onSuccess(data) {
-      setTokenBalance(data.toString());
-    },
   });
+
+  // Update token balance when balanceData changes
+  useEffect(() => {
+    if (balanceData) {
+      setTokenBalance(balanceData.toString());
+    }
+  }, [balanceData]);
 
   // Withdraw tokens from the contract
   const { write: withdrawTokens } = useContractWrite({
